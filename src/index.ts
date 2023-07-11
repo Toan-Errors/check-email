@@ -5,9 +5,8 @@ import { Cache } from "memory-cache";
 const EMAIL_REGEX =
   /^([\w-]+(?:.[\w-]+))@((?:[\w-]+.)\w[\w-]{0,66}).([a-z]{2,6}(?:.[a-z]{2})?)$/i;
 
-// Tạo một bộ nhớ cache với thời gian sống là 1 ngày
 const dnsCache = new Cache();
-const DNS_CACHE_TTL = 86400000;
+const DNS_CACHE_TTL = Number(process.env.DNS_CACHE_TTL) || 86400;
 
 export const validateEmail = (email: string) => {
   if (!email || email.length > 254) {
@@ -25,16 +24,13 @@ export const checkEmail = async (email: string) => {
 
     const domain = email.split("@")[1];
 
-    let records = [];
-    records = dnsCache.get(domain) as [];
-    if (!records) {
-      records = await resolveMx(domain);
-      dnsCache.put(domain, records, DNS_CACHE_TTL);
+    const result = dnsCache.get(domain) as [];
+
+    if (result) {
+      return result;
     }
 
-    if (records.length === 0) {
-      return false;
-    }
+    const records = await resolveMx(domain);
 
     const sortedRecords = records.sort(
       (a: any, b: any) => a.priority - b.priority
@@ -86,7 +82,7 @@ export const checkEmail = async (email: string) => {
     });
 
     const res = await connPromise;
-
+    dnsCache.put(domain, res, DNS_CACHE_TTL);
     return res;
   } catch (error) {
     return false;

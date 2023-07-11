@@ -1,15 +1,22 @@
 {
   "name": "@toanerrors/check-email",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.3",
+  "description": "Check email is valid or not",
   "main": "libs/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "type": "module",
+  "repository": "git+https://github.com/Toan-Errors/check-email.git",
+  "keywords": [
+    "check",
+    "email",
+    "toanerrors"
+  ],
   "author": "toanerrors",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.4.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
